@@ -1,5 +1,5 @@
 import numpy as np
-import pycuslsa as pyslsa
+#import pycuslsa as pyslsa
 import matplotlib.pyplot as plt
 import neuraltda.topology2 as tp2
 import neuraltda.stimulus_space as ss
@@ -15,7 +15,7 @@ import tqdm
 import os
 import datetime
 daystr = datetime.datetime.now().strftime('%Y%m%d')
-figsavepth = '/home/brad/DailyLog/'+daystr+'/'
+figsavepth = '/home/alex/DailyLog/'+daystr+'/'
 print(figsavepth)
 
 # Class to define environments with holes
@@ -52,7 +52,7 @@ class TPEnv:
             if np.sqrt((h[0] - c[0])**2 + (h[1] - c[1])**2) <= 2*self.hole_rad:
                 return True
         return False
- 
+
 def generate_environments(N, h, numrepeats=1):
     envs = []
     for nholes in range(N):
@@ -237,7 +237,7 @@ def spikes_to_dataframe(spikes, fs, nsecs):
 
 def plot_environment(env, fields, sigma):
     # Plot environments
-    plt.style.use('/home/brad/code/NeuralTDA/gentnerlab.mplstyle')
+    #plt.style.use('/home/alex/gentnerlab/NeuralTDA/gentnerlab.mplstyle')
 
     rad = sigma
 
@@ -331,14 +331,19 @@ class EnvironmentSimulation:
 
             os.remove(tmpf)
 
-    def mds_embed(self, env_num):
+    def mds_embed(self, env_num, classic=False):
 
         g = self.graphs[env_num][0]
         maxsimps = self.graphs[env_num][1]
         binmat = self.graphs[env_num][2]
         pths1 = self.paths[env_num]
         stim = pths1[0,:, :].T
-        self.embed_pts, self.dmat, self.sorted_node_list = ss.mds_embed(g)
+        
+        if classic:
+            self.embed_pts, self.dmat, self.sorted_node_list = ss.classic_mds_embed(g)
+        else:
+            self.embed_pts, self.dmat, self.sorted_node_list = ss.mds_embed(g)
+                
         self.x, self.y = ss.prepare_affine_data(binmat, stim, self.embed_pts, self.sorted_node_list)
 
         self.L = lambda a: ss.affine_loss(a, self.x, self.y, 2, 2)
