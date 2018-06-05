@@ -1,5 +1,5 @@
 import numpy as np
-#import pycuslsa as pyslsa
+import pycuslsa as pyslsa
 import matplotlib.pyplot as plt
 import neuraltda.topology2 as tp2
 import neuraltda.stimulus_space as ss
@@ -15,7 +15,7 @@ import tqdm
 import os
 import datetime
 daystr = datetime.datetime.now().strftime('%Y%m%d')
-figsavepth = '/home/alex/DailyLog/'+daystr+'/'
+figsavepth = '/home/brad/DailyLog/'+daystr+'/'
 print(figsavepth)
 
 # Class to define environments with holes
@@ -237,7 +237,7 @@ def spikes_to_dataframe(spikes, fs, nsecs):
 
 def plot_environment(env, fields, sigma):
     # Plot environments
-    #plt.style.use('/home/alex/gentnerlab/NeuralTDA/gentnerlab.mplstyle')
+    plt.style.use('/home/brad/code/NeuralTDA/gentnerlab.mplstyle')
 
     rad = sigma
 
