@@ -217,6 +217,57 @@ def mds_embed(graph):
 
     return (embed_pts, dmat, sorted_node_list)
 
+def classic_mds_embed(graph, n_components=2):
+    '''
+    Classic Multidimensional Scaling 
+    
+    Parameters
+    ---------
+    graph : networkx.Graph
+        Weighted graph of cell groups
+        
+    n_components : int, optional, default: 2
+        Number of dimensions in which to immerse the dissimilarities.
+        
+    Return
+    ---------
+    embed_pts
+    
+    dmat
+    
+    sorted_node_list
+    '''
+    
+    sorted_node_list = sorted(list(graph.nodes()), key=len)
+    dmat = nx.floyd_warshall_numpy(graph, nodelist=sorted_node_list)
+    
+    if n_components <= 0 or int(n_components) != n_components:
+        raise Exception('m must be a positive integer')
+    if not np.allclose(dmat, dmat.T):
+        raise Exception('D not symmetrical')
+
+    D2 = np.power(dmat, 2)
+
+    n = D2.shape[0]
+
+    I = np.ones((n, n))
+
+    J = np.eye(n) - (1/n * I)
+
+    B = -J.dot(D2).dot(J)/2
+
+    (eigvals, eigvecs) = np.linalg.eigh(B)
+
+#   i = np.absolute(eigvals).argsort()[::-1][:self.m] # if eigenvalues need be sorted based on magnitude
+    i = eigvals.argsort()[::-1][:n_components]
+    L = np.diag(eigvals[i])
+
+    E = eigvecs[:,i]
+    
+    embed_pts = E.dot(np.sqrt(L))
+    
+    return (embed_pts, dmat, sorted_node_list)
+
 def get_mds_position_of_cg(cg, embed_pts, sorted_node_list):
 
     return embed_pts[sorted_node_list.index(cg), :]
